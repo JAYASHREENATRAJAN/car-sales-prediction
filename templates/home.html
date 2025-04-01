@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Home - Car Purchase Prediction WebApp{% endblock %}
+{% block content %}
+<section>
+  <h2>Welcome to Car Purchase Prediction WebApp</h2>
+  <p>Our platform uses advanced AI to predict car purchase rates based on customer details. The required details include:</p>
+  <ul style="list-style-type: disc; text-align: left; display: inline-block;">
+    <li>Gender (0 for Female, 1 for Male)</li>
+    <li>Age</li>
+    <li>Annual Salary</li>
+    <li>Credit Score</li>
+    <li>Net Worth</li>
+  </ul>
+  <p>To see the prediction in action, please fill out our <a href="{{ url_for('test') }}">Test Form</a>.</p>
+  <p>For more details, download our comprehensive guide:</p>
+  <p><a href="{{ url_for('static', filename='deeplearning.pdf') }}" target="_blank">Download PDF</a></p>
+</section>
+{% endblock %}

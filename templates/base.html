@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Car Purchase Prediction WebApp{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://kit.fontawesome.com/628c8d2499.js" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Reset */
+    
+    /* Content Container with Background Image */
+    .content-container {
+      position: relative;
+      max-width: 1200px;
+      margin: 2em auto;
+      padding: 2em;
+      width: 75%;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      overflow: hidden;
+      background: url("{{ url_for('static', filename='download.jpg') }}") no-repeat center center/cover;
+    }
+    /* Dark Transparent Overlay */
+    .content-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);  /* 50% dark overlay */
+      z-index: 0;
+    }
+    /* Overlay Text for Header in Content Container */
+    .content-container .overlay-text {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 1em;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
+    .content-container .overlay-text h1 {
+      font-size: 3em;
+      margin-bottom: 0.5em;
+    }
+    .content-container .overlay-text p {
+      font-size: 1.25em;
+    }
+    /* Content Block within Container */
+    .content-block {
+      position: relative;
+      z-index: 1;
+      margin-top: 1em;
+      text-align: center;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(248, 247, 247, 0.8);
+    }
+    /* Footer */
+    
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <header>
+    <div class="nav-container">
+      <nav id="menu">
+        <ul>
+          <li><a href="{{ url_for('home') }}">Home</a></li>
+          <li><a href="{{ url_for('services') }}">Services</a></li>
+          <li><a href="{{ url_for('test') }}">Test Page</a></li>
+          <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Content Container with Background Image and Overlay Text -->
+  <div class="content-container">
+    <div class="overlay-text">
+      <h1>Car Purchase Prediction</h1>
+      <p>Accurate predictions based on customer details.</p>
+      <!-- Additional line: Download PDF -->
+      <p><a href="{{ url_for('static', filename='deeplearning.pdf') }}" target="_blank">Get More Details (Download PDF)</a></p>
+    </div>
+    <!-- Main page content injected here -->
+    <div class="content-block">
+      {% block content %}
+      {% endblock %}
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Car Purchase Prediction WebApp</p>
+    <p>Contact us: support@carpredictor.com | +1 (555) 123-4567</p>
+  </footer>
+
+  <!-- JavaScript for Forms (if needed) -->
+  <script>
+    // Upload form submission
+    if(document.getElementById("upload-form")) {
+      document.getElementById("upload-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        let formData = new FormData(this);
+        fetch("/upload", {
+          method: "POST",
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("upload-result").innerText = data.message || data.error;
+        });
+      });
+    }
+    // Predict form submission
+    if(document.getElementById("predict-form")) {
+      document.getElementById("predict-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        let formData = new FormData(this);
+        fetch("/test", {
+          method: "POST",
+          body: formData
+        })
+        .then(response => response.text())
+        .then(text => {
+          try {
+            const data = JSON.parse(text);
+            if(data.prediction) {
+              document.getElementById("result").innerText = "Predicted Price: $" + data.prediction;
+            } else {
+              document.getElementById("result").innerText = "Error: " + data.error;
+            }
+          } catch(e) {
+            console.error("Failed to parse JSON. Raw response:", text);
+            document.getElementById("result").innerText = "Error: Received invalid JSON response.";
+          }
+        })
+        .catch(error => {
+          console.error("Fetch error:", error);
+          document.getElementById("result").innerText = "Error: " + error;
+        });
+      });
+    }
+  </script>
+</body>
+</html>

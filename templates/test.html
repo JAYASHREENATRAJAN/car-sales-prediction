@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Test Prediction{% endblock %}
+{% block content %}
+<section id="test">
+  <h1>Car Purchase Prediction</h1>
+    
+  <div class="form-container">
+    <form id="predict-form">
+      <div class="input-data">
+        <input type="text" name="gender" required>
+        <div class="underline"></div>
+        <label>Gender (0: Female, 1: Male)</label>
+      </div>
+      
+      <div class="input-data">
+        <input type="text" name="age" required>
+        <div class="underline"></div>
+        <label>Age</label>
+      </div>
+      
+      <div class="input-data">
+        <input type="text" name="annual_salary" required>
+        <div class="underline"></div>
+        <label>Annual Salary</label>
+      </div>
+      
+      <div class="input-data">
+        <input type="text" name="credit_score" required>
+        <div class="underline"></div>
+        <label>Credit Score</label>
+      </div>
+      
+      <div class="input-data">
+        <input type="text" name="net_worth" required>
+        <div class="underline"></div>
+        <label>Net Worth</label>
+      </div>
+      
+      <button type="submit" class="submit-btn">Predict</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <div class="more-details">
+    <p>For more details on the required information and our prediction process, please refer to our <a href="{{ url_for('home') }}">Home Page</a>.</p>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // Prediction form submission
+  document.getElementById("predict-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    let formData = new FormData(this);
+    
+    fetch("/test", {
+      method: "POST",
+      body: formData
+    })
+    .then(response => response.text())
+    .then(text => {
+      try {
+        const data = JSON.parse(text);
+        if(data.prediction) {
+          document.getElementById("result").innerText = "Predicted Price: $" + data.prediction;
+        } else {
+          document.getElementById("result").innerText = "Error: " + data.error;
+        }
+      } catch(e) {
+        console.error("Failed to parse JSON. Raw response:", text);
+        document.getElementById("result").innerText = "Error: Received invalid JSON response.";
+      }
+    })
+    .catch(error => {
+      console.error("Fetch error:", error);
+      document.getElementById("result").innerText = "Error: " + error;
+    });
+  });
+  
+  // Upload form submission
+  if(document.getElementById("upload-form")) {
+    document.getElementById("upload-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+      let formData = new FormData(this);
+      fetch("/upload", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("upload-result").innerText = data.message || data.error;
+      })
+      .catch(error => {
+        console.error("Upload error:", error);
+        document.getElementById("upload-result").innerText = "Error: " + error;
+      });
+    });
+  }
+});
+</script>
+{% endblock %}
